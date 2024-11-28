@@ -294,6 +294,7 @@ private:
     }
 
     // 명령어 처리 함수
+    // TODO : 파일 저장 에러 해결하기
     void handleCommand() {
         if (command == "wq") {
             saveToFile("output.txt");
