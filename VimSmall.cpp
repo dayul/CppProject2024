@@ -50,7 +50,7 @@ public:
         statusBar.setFont(font);
         statusBar.setCharacterSize(24);
         statusBar.setFillColor(Color::White);
-        statusBar.setPosition(10, 770);  // 화면 왼쪽 하단
+        statusBar.setPosition(10, 770);
 
         // 윈도우 생성
         window.create(VideoMode(1000, 800), "VimSmall");
@@ -85,7 +85,7 @@ public:
                 updateText();  // 텍스트, 커서 업데이트
                 window.draw(text);
                 window.draw(cursor);
-                window.draw(statusBar);  // 상태 표시줄 표시
+                window.draw(statusBar);
             }
 
             // 잘못된 명령어 입력 2초 후 normal 모드로 전환
@@ -220,7 +220,7 @@ private:
             }
             else if (event.text.unicode < 128) {
                 // 그 외 일반 문자 입력 처리
-                // 맞는 줄에 문자를 삽입
+                // 맞는 줄(y)에 문자를 삽입
                 lines[cursorPosition.y].insert(cursorPosition.x, 1, static_cast<char>(event.text.unicode));
                 cursorPosition.x++;
 
@@ -254,7 +254,6 @@ private:
                 updateStatusBar();
             }
             else if (event.key.code == Keyboard::W) {
-                // 파일 저장
                 saveToFile("output.txt");
             }
         }
@@ -265,7 +264,7 @@ private:
             }
         }
 
-        // 커서 이동
+        // H, J, K, L 별 커서 이동
         if (event.key.code == Keyboard::H && cursorPosition.x > 0) {
             cursorPosition.x--;
         }
@@ -301,8 +300,6 @@ private:
         }
 
         text.setString(oss.str());
-
-        // 커서 위치 계산
         cursor.setString("|");
 
         // 커서의 Y 좌표는 커서가 위치한 줄에서 `scrollOffset`을 뺀 값
@@ -324,7 +321,6 @@ private:
     // 상태 표시줄 업데이트 함수
     void updateStatusBar() {
         if (cmdMode) {
-            cout << "cmdMode가 true" << endl;
             if (errorMode) {
                 statusBar.setFillColor(Color::Red);
                 statusBar.setString("Unknown command.. Please enter again");
@@ -335,7 +331,6 @@ private:
             }
         }
         else {
-            cout << "cmdMode가 false" << endl;
             if(errorMode) {
                 statusBar.setFillColor(Color::Red);
                 statusBar.setString("Unknown command.. Please enter again");
@@ -345,7 +340,6 @@ private:
                 statusBar.setString("-- " + mode + " --");
             } 
         }
-        cout << "현재 상태 표시줄: " << statusBar.getString().toAnsiString() << endl;
     }
 
     // 파일 저장 함수
@@ -364,37 +358,28 @@ private:
 
     // 명령어 처리 함수
     void handleCommand() {
-        cout << "받은 명령어 trim 전 출력: " << command << endl;
 
-        //command = trim(command);
-        cout << "받은 명령어 trim 후 출력: " << command << endl;
-
-        if (command == ":wq ") {
+        if (command == ":wq") {
             cout << "wq 일때 : " << endl;
             saveToFile("output");
             window.close();
         }
         else if (command.find(":w ") == 0) {          // :w 명령어가 0 위치인지 확인
-            // 이름이 주어지지 않았을 경우 기본적으로 이름 주기
+            // 이름이 주어지지 않았을 경우 기본적으로 output.txt로 이름 주기
             string filename = command.length() > 2 ? trim(command.substr(2)) : "output";
-            cout << "w 일때 입력받은 파일명 출력: " << filename << endl;
             saveToFile(filename);
             window.close();
         }
-        else if (command == ":q! ") {
-            cout << "q! 일때 : " << endl;
+        else if (command == ":q!") {            // 저장 안 하고 바로 종료
             window.close();
         }
         else {
-            cout << "else 일때 : " << endl;
             errorMode = true;
             cmdClock.restart();     // 시간 재설정
         }
 
         command.clear();
         cmdMode = false;
-
-        cout << "끝까지 함수가 종료 되는지 확인" << endl;
     }
 
     // 명령어 전처리 함수
