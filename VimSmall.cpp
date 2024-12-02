@@ -253,9 +253,6 @@ private:
                 command.clear();
                 updateStatusBar();
             }
-            else if (event.key.code == Keyboard::W) {
-                saveToFile("output.txt");
-            }
         }
         else if (iMode) {
             if (event.key.code == Keyboard::Escape) {
